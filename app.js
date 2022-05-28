@@ -59,8 +59,6 @@ var browserConfig = {
 
 const cookiePolicyQuery = 'button[data-a-target="consent-banner-accept"]';
 const matureContentQuery = 'button[data-a-target="player-overlay-mature-accept"]';
-const sidebarQuery = '*[data-test-selector="user-menu__toggle"]';
-const userStatusQuery = 'span[data-a-target="presence-text"]';
 const channelsQuery = 'a[data-test-selector*="ChannelLink"]';
 const streamPauseQuery = 'button[data-a-target="player-play-pause-button"]';
 const streamSettingsQuery = '[data-a-target="player-settings-button"]';
@@ -160,12 +158,6 @@ async function viewRandomPage(browser, page) {
           console.log(`📸 Screenshot created: ${watch}.png`);
         }
 
-        await clickWhenExist(page, sidebarQuery); //Open sidebar
-        await page.waitFor(userStatusQuery); //Waiting for sidebar
-        let status = await queryOnWebsite(page, userStatusQuery); //status jQuery
-        await clickWhenExist(page, sidebarQuery); //Close sidebar
-
-        console.log('💡 Account status:', status[0] ? status[0].children[0].data : "Unknown");
         console.log(`🕒 Time: ${dayjs().format('HH:mm:ss')}`);
         console.log(`💤 Watching stream for ${sleep / 60000} minutes\n`);
 
