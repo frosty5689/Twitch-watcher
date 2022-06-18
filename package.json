@@ -1,6 +1,6 @@
 {
   "name": "twitch-watcher",
-  "version": "2.0.7",
+  "version": "2.0.8",
   "description": "Automatic watching the Twitch to get drops",
   "main": "app.js",
   "scripts": {
