@@ -356,7 +356,9 @@ async function clickWhenExist(page, query) {
       await page.waitFor(500);
       return;
     }
-  } catch (e) { }
+  } catch (e) { 
+    console.log(`Failed to click on query: ${query}, ${e.message}`)
+  }
 }
 
 
