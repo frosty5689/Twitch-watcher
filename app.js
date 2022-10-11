@@ -185,7 +185,7 @@ async function claimDropsIfAny(page) {
   if (claimDrops.length > 0) {
     console.log(`🔎 ${claimDrops.length} drop(s) found!`);
     for (var i = 0; i < claimDrops.length; i++) {
-      await clickWhenExist(page, campaignInProgressDropClaimQuery); // Claim drop X times based on how many drops are available
+      await clickWhenExist(page, campaignInProgressDropClaimQuery, 2); // Claim drop X times based on how many drops are available
     }
     var dropsStillLeft = await queryOnWebsite(page, campaignInProgressDropClaimQuery);
     if (dropsStillLeft.length > 0) {
@@ -352,12 +352,12 @@ function getRandomInt(min, max) {
 
 
 
-async function clickWhenExist(page, query) {
+async function clickWhenExist(page, query, clickCount = 1) {
   let result = await queryOnWebsite(page, query);
 
   try {
     if (result[0].type == 'tag' && result[0].name == 'button') {
-      await page.click(query);
+      await page.click(query, {delay: 50, clickCount});
       await page.waitFor(500);
       return;
     }
