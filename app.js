@@ -59,7 +59,8 @@ var browserConfig = {
 
 const cookiePolicyQuery = 'button[data-a-target="consent-banner-accept"]';
 const matureContentQuery = 'button[data-a-target="player-overlay-mature-accept"]';
-const channelsQuery = 'a[data-a-target="preview-card-image-link"]';
+const oldChannelsQuery ='a[data-a-target="preview-card-image-link"]';
+const channelsQuery = 'div[class="Layout-sc-1xcs6mc-0 jCGmCy"] > a[class="ScCoreLink-sc-16kq0mq-0 eFqEFL tw-link"]';
 const streamPauseQuery = 'button[data-a-target="player-play-pause-button"]';
 const streamSettingsQuery = '[data-a-target="player-settings-button"]';
 const streamQualitySettingQuery = '[data-a-target="player-settings-menu-item-quality"]';
@@ -229,7 +230,8 @@ async function readLoginData() {
       if (proxy) browserConfig.args.push('--proxy-server=' + proxy);
       cookie[0].value = process.env.token; //Set cookie from env
       browserConfig.executablePath = '/usr/bin/chromium-browser'; //For docker container
-
+      // For testing in Windows
+      // browserConfig.executablePath = 'C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe';
       return cookie;
     } else {
       console.log('❌ No config file found!');
@@ -268,6 +270,11 @@ async function spawnBrowser() {
   console.log('🔧 Setting auth token...');
   await page.setCookie(...cookie); //Set cookie
 
+  console.log('🔧 Setting local storage options...');
+  await page.evaluateOnNewDocument (() => {
+      localStorage.setItem('browse-preview.show-preview', 'false');
+    });
+  
   console.log('⏰ Setting timeouts...');
   await page.setDefaultNavigationTimeout(process.env.timeout || 0);
   await page.setDefaultTimeout(process.env.timeout || 0);
@@ -295,7 +302,11 @@ async function getAllStreamer(page) {
   await checkLogin(page);
   console.log('📡 Checking active streamers...');
   await scroll(page, scrollTimes);
-  const jquery = await queryOnWebsite(page, channelsQuery);
+  let jquery = await queryOnWebsite(page, channelsQuery);
+  if (jquery.length == 0) {
+    console.log('🛑 No active streamers found! Retrying with old channels query');
+    jquery =  await queryOnWebsite(page, oldChannelsQuery);
+  }
   streamers = null;
   streamers = new Array();
 
